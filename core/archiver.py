@@ -47,10 +47,6 @@ def create_arhive(
             # Проходим по всем файлам и папкам
             for root, dirs, files in os.walk(source_folder_path):
                 # Фильтруем директории согласно исключениям
-                for d in dirs:
-                    if Path(os.path.join(root, d)) in exclusions:
-                        print(f"{d} is in exclusions")
-
                 dirs[:] = [
                     d for d in dirs if Path(os.path.join(root, d)) not in exclusions
                 ]
@@ -63,7 +59,7 @@ def create_arhive(
                     )
 
                     # Проверяем, не находится ли файл в списке исключений
-                    if full_path not in exclusions and file not in exclusions:
+                    if Path(full_path) not in exclusions:
                         zf.write(full_path, rel_path)
 
         return final_target_path
@@ -76,6 +72,7 @@ def is_path_in_any_base_path(target_path: Path, base_paths: list[Path]) -> bool:
     return any(target_path.is_relative_to(base_path) for base_path in base_paths)
 
 
+# def count_files_to_archive(source_folder_path: Path, exclusions: list[Path]) -> tuple[int, int]:
 def count_files_to_archive(source_folder_path: Path, exclusions: list[Path]) -> int:
     """
     Подсчитывает количество файлов, которые будут включены в архив.
@@ -95,17 +92,19 @@ def count_files_to_archive(source_folder_path: Path, exclusions: list[Path]) -> 
     total_folders = 0
 
     for root, dirs, files in os.walk(source_folder_path):
-        for d in dirs:
-            if not is_path_in_any_base_path(Path(os.path.join(root, d)), exclusions):
-                total_folders += 1
+        dirs[:] = [d for d in dirs if Path(os.path.join(root, d)) not in exclusions]
+        total_folders += len(dirs)
 
-        for f in files:
-            if not is_path_in_any_base_path(Path(os.path.join(root, f)), exclusions):
+        for file in files:
+            full_path = os.path.join(root, file)
+            # Проверяем, не находится ли файл в списке исключений
+            if Path(full_path) not in exclusions:
                 total_files += 1
 
     # Добавляем корневую папку
     total_folders += 1
-    return total_files, total_folders
+    # return total_files, total_folders
+    return total_files + total_folders
 
 
 def create_exclusion_list(root: Path, exclusions: list[str]) -> list[Path]:
