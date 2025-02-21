@@ -51,6 +51,11 @@ def create_arhive(
                     d for d in dirs if Path(os.path.join(root, d)) not in exclusions
                 ]
 
+                # Добавляем текущую директорию в архив
+                rel_path = os.path.relpath(root, start=os.path.dirname(source_folder_path))
+                if len(os.listdir(root)) == 0:
+                    zf.write(os.path.join(root, ""), rel_path + '/')
+
                 # Добавляем оставшиеся файлы в архив
                 for file in files:
                     full_path = os.path.join(root, file)

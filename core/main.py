@@ -7,8 +7,6 @@ from archiver import count_files_to_archive, create_arhive, create_exclusion_lis
 from config import create_default_config_file, get_config, isConfigExists
 from logger import logger
 from ssh_mounter import mount_ssh_folder, unmount_ssh_folder
-from test import test, test2
-
 
 def main():
     logger.info("======== Backup programm started ========")
@@ -32,7 +30,7 @@ def main():
 
     files = count_files_to_archive(source_folder, excluded_dirs)
     print(f"Total files - {files}")
-
+    
     try:
         mount_ssh_folder(local_path, remote_path, username, host)
         logger.info(f"Папка успешно примонтирована в {local_path}")
