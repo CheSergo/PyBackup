@@ -73,8 +73,9 @@ def create_arhive(
 
                     # Проверяем, не находится ли файл в списке исключений
                     if Path(full_path) not in exclusions:
+                        tracker.update()
+                        tracker.show_progress()
                         zf.write(full_path, rel_path)
-                        tracker.update(file)
 
         return final_target_path
 
