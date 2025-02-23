@@ -3,10 +3,11 @@
 import sys
 from pathlib import Path
 
-from archiver import count_files_to_archive, create_arhive, create_exclusion_list
+from archiver import create_arhive, create_exclusion_list
 from config import create_default_config_file, get_config, isConfigExists
 from logger import logger
 from ssh_mounter import mount_ssh_folder, unmount_ssh_folder
+
 
 def main():
     logger.info("======== Backup programm started ========")
@@ -28,9 +29,6 @@ def main():
     excluded_dirs = create_exclusion_list(source_folder, config.excluded_directories)
     target_folder = Path(config.target_folder)
 
-    files = count_files_to_archive(source_folder, excluded_dirs)
-    print(f"Total files - {files}")
-    
     try:
         mount_ssh_folder(local_path, remote_path, username, host)
         logger.info(f"Папка успешно примонтирована в {local_path}")

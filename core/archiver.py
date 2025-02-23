@@ -3,6 +3,7 @@ import zipfile
 from pathlib import Path
 
 from logger import logger
+from progress_tracker import ArchiveProgressTracker
 
 
 def create_arhive(
@@ -39,6 +40,11 @@ def create_arhive(
     if target_dir and not os.path.exists(target_dir):
         os.makedirs(target_dir)
 
+    # Считаем файлы
+    files = count_files_to_archive(source_folder_path, exclusions)
+    tracker = ArchiveProgressTracker(files, os.path.basename(source_folder_path))
+    print(f"Total files - {files}")
+
     try:
         # Создаем архив
         with zipfile.ZipFile(
@@ -52,9 +58,11 @@ def create_arhive(
                 ]
 
                 # Добавляем текущую директорию в архив
-                rel_path = os.path.relpath(root, start=os.path.dirname(source_folder_path))
+                rel_path = os.path.relpath(
+                    root, start=os.path.dirname(source_folder_path)
+                )
                 if len(os.listdir(root)) == 0:
-                    zf.write(os.path.join(root, ""), rel_path + '/')
+                    zf.write(os.path.join(root, ""), rel_path + "/")
 
                 # Добавляем оставшиеся файлы в архив
                 for file in files:
@@ -66,6 +74,7 @@ def create_arhive(
                     # Проверяем, не находится ли файл в списке исключений
                     if Path(full_path) not in exclusions:
                         zf.write(full_path, rel_path)
+                        tracker.update(file)
 
         return final_target_path
 
