@@ -1,3 +1,27 @@
 core/config
 core/logs
 
+cli/test-results
+cli/node_modules
+
+# Output
+cli/.output
+cli/.vercel
+cli/.netlify
+cli/.wrangler
+cli/.svelte-kit
+cli/build
+
+# OS
+cli/.DS_Store
+cli/Thumbs.db
+
+# Env
+cli/.env
+cli/.env.*
+#cli/!.env.example
+#cli/!.env.test
+
+# Vite
+cli/vite.config.js.timestamp-*
+cli/vite.config.ts.timestamp-*
